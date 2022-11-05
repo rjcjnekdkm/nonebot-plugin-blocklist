@@ -7,7 +7,12 @@ from nonebot.adapters.onebot.v11 import GROUP_ADMIN, GROUP_OWNER
 from nonebot import get_driver, on_command, on_message, logger
 
 config = nonebot.get_driver().config
-blocklist = get_driver().config.bot_blocklist
+try:
+    blocklist = get_driver().config.bot_blocklist
+    logger.info(f"已加载{len(blocklist)}个阻断用户")
+except:
+    blocklist = []
+    logger.info("未读取到阻断名单，请检查env文件")
 
 
 user_permission = on_command("测试权限")
