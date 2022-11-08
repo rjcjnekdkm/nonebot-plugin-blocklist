@@ -9,10 +9,10 @@ from nonebot import get_driver, on_command, on_message, logger
 config = nonebot.get_driver().config
 try:
     blocklist = get_driver().config.bot_blocklist
-    logger.info(f"已加载{len(blocklist)}个阻断用户")
+    logger.success(f"已加载{len(blocklist)}个阻断用户")
 except:
     blocklist = []
-    logger.info("未读取到阻断名单，请检查env文件")
+    logger.error("未读取到阻断名单，请检查env文件")
 
 
 user_permission = on_command("测试权限")
@@ -39,10 +39,10 @@ async def _(event: Event, matcher: Matcher):
     if at != []:
         for x in blocklist:
             if int(x) in at:
-                logger.info("已忽略该条指令")
+                logger.success("已忽略该条指令")
                 matcher.stop_propagation()
     elif event.get_user_id() in blocklist:
-        logger.info("已拦截该人指令")
+        logger.success("已拦截该人指令")
         matcher.stop_propagation()
 
 
