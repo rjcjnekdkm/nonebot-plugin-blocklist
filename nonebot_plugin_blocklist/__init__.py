@@ -4,6 +4,7 @@ from nonebot.matcher import Matcher
 from nonebot.adapters import Event
 from nonebot.adapters.onebot.v11 import Bot
 from nonebot.adapters.onebot.v11 import GROUP_ADMIN, GROUP_OWNER
+from nonebot.permission import SUPERUSER
 from nonebot import get_driver, on_command, on_message, logger
 
 config = nonebot.get_driver().config
@@ -15,19 +16,23 @@ except:
     logger.error("未读取到阻断名单，请检查env文件")
 
 
-user_permission = on_command("测试权限")
+user_permission = on_command("测试权限", aliases={"权限测试"})
 
 
 @user_permission.handle()
 async def _(bot: Bot, event: Event):
     msg = event.get_message()
-    if str(msg) == "测试权限":
-        if await GROUP_OWNER(bot, event):
-            await user_permission.send("群主测试成功")
-        elif await GROUP_ADMIN(bot, event):
-            await user_permission.send("管理测试成功")
+    if len(str(msg)) == 4:
+        if await SUPERUSER(bot, event):
+            su="，该用户为超管"
         else:
-            await user_permission.send("群员测试成功")
+            su=""
+        if await GROUP_OWNER(bot, event):
+            await user_permission.send(f"群主测试成功{su}")
+        elif await GROUP_ADMIN(bot, event):
+            await user_permission.send(f"管理测试成功{su}")
+        else:
+            await user_permission.send(f"群员测试成功{su}")
 
 
 block_msg = on_message(priority=0, block=False)
