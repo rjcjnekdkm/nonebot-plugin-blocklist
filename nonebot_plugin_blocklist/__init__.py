@@ -41,14 +41,15 @@ block_msg = on_message(priority=0, block=False)
 @block_msg.handle()
 async def _(event: Event, matcher: Matcher):
     at = At(event.json())
-    if at != []:
+    if  event.get_user_id() in blocklist:
+        logger.success("已拦截该人指令")
+        matcher.stop_propagation()
+    elif at != []:
         for x in blocklist:
             if int(x) in at:
                 logger.success("已忽略该条指令")
                 matcher.stop_propagation()
-    elif event.get_user_id() in blocklist:
-        logger.success("已拦截该人指令")
-        matcher.stop_propagation()
+   
 
 
 def At(data: str):
